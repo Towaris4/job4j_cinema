@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+
+<div class="container mt-4">
+    <h2>Список сеансов</h2>
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Фильм (ID)</th>
+            <th scope="col">Зал (ID)</th>
+            <th scope="col">Начало</th>
+            <th scope="col">Окончание</th>
+            <th scope="col">Цена (₽)</th>
+            <th scope="col">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="filmSession : ${filmSessions}">
+            <td th:text="${filmSession.id}" />
+            <td>
+                <a th:text="'Фильм #' + ${filmSession.filmId}"
+                   th:href="@{/films/{filmId}(filmId=${filmSession.filmId})}">
+                </a>
+            </td>
+            <td th:text="${filmSession.hallId}" />
+            <td th:text="${#temporals.format(filmSession.startTime, 'dd.MM.yyyy HH:mm')}" />
+            <td th:text="${#temporals.format(filmSession.endTime, 'dd.MM.yyyy HH:mm')}" />
+            <td th:text="${filmSession.price}" />
+            <td>
+                <a th:href="@{/filmSessions/{id}(id=${filmSession.id})}"
+                   class="btn btn-sm btn-outline-primary">
+                    Подробнее
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Сообщение, если сессий нет -->
+    <div th:if="${#lists.isEmpty(filmSessions)}" class="alert alert-info">
+        Список сеансов пуст
+    </div>
+</div>
+
+<footer th:include="fragments/blocks/footer :: footer"></footer>
+</body>
+</html>

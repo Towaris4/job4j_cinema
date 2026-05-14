@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+
+<div class="container mt-4">
+    <h2>Список фильмов</h2>
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название</th>
+            <th scope="col">Описание</th>
+            <th scope="col">Год</th>
+            <th scope="col">Жанр (ID)</th>
+            <th scope="col">Возраст</th>
+            <th scope="col">Длительность (мин)</th>
+            <th scope="col">Файл (ID)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="film : ${films}">
+            <td th:text="${film.id}" />
+            <td>
+                <a th:text="${film.name}"
+                   th:href="@{/films/{filmId}(filmId=${film.id})}">
+                </a>
+            </td>
+            <td th:text="${film.description}" />
+            <td th:text="${film.year}" />
+            <td th:text="${film.genreId}" />
+            <td th:text="${film.minimalAge}" />
+            <td th:text="${film.durationInMinutes}" />
+            <td th:text="${film.fileId}" />
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Опционально: сообщение, если фильмов нет -->
+    <div th:if="${#lists.isEmpty(films)}" class="alert alert-info">
+        Список фильмов пуст
+    </div>
+</div>
+
+<footer th:include="fragments/blocks/footer :: footer"></footer>
+</body>
+</html>
