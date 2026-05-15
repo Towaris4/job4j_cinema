@@ -4,10 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.sql2o.Sql2o;
+import ru.job4j.cinema.model.Film;
 import ru.job4j.cinema.model.FilmSession;
 import ru.job4j.cinema.model.Genre;
 import ru.job4j.cinema.model.Hall;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
@@ -30,6 +33,18 @@ public class Sql2oHallRepository implements HallRepository {
         } catch (Exception e) {
             LOG.error("Ошибка при поиске зала по id: {}", id, e);
             return Optional.empty();
+
+        }
+    }
+
+    @Override
+    public Collection<Hall> findAll() {
+        try (var connection = sql2o.open()) {
+            var query = connection.createQuery("SELECT * FROM halls");
+            return query.setColumnMappings(Hall.COLUMN_MAPPING).executeAndFetch(Hall.class);
+        } catch (Exception e) {
+            LOG.error("Ошибка при получении списка залов", e);
+            return new ArrayList<>();
         }
     }
 }

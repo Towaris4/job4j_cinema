@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container mt-4">
+    <h2>Билет забронирован</h2>
+    <div class="alert alert-success">
+        <p class="mb-0">Место успешно забронировано.</p>
+        <p class="mb-0 mt-2" th:if="${ticket != null}">
+            Сеанс №<span th:text="${ticket.sessionId}"></span>,
+            ряд <span th:text="${ticket.rowNumber}"></span>,
+            место <span th:text="${ticket.placeNumber}"></span>.
+        </p>
+    </div>
+    <a class="btn btn-primary" th:href="@{/filmSessions}">К сеансам</a>
+    <a class="btn btn-outline-secondary ms-2" th:href="@{/tickets/buying}">Купить ещё</a>
+</div>
+<footer th:include="fragments/blocks/footer :: footer"></footer>
+</body>
+</html>

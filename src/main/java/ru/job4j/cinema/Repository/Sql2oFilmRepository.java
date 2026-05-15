@@ -38,7 +38,7 @@ public class Sql2oFilmRepository implements FilmRepository{
             var query = connection.createQuery("SELECT * FROM films");
             return query.setColumnMappings(Film.COLUMN_MAPPING).executeAndFetch(Film.class);
         } catch (Exception e) {
-            LOG.error("Ошибка при получении списка всех кандидатов", e);
+            LOG.error("Ошибка при получении списка всех фильмов", e);
         }
         return new ArrayList<>();
     }

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container mt-4">
+    <h2>Покупка билета</h2>
+
+    <form class="mt-3" th:action="@{/tickets/buying}" method="post" id="buyingForm">
+        <div class="mb-3">
+            <label for="sessionId" class="form-label"><b>Сеанс</b></label>
+            <select class="form-control" id="sessionId" name="sessionId" required>
+                <option value="">-- Выберите сеанс --</option>
+                <option th:each="fs : ${filmSessions}"
+                        th:value="${fs.id}"
+                        th:selected="${selectedSessionId != null and selectedSessionId == fs.id}">
+                    <th:block th:each="f : ${film}" th:if="${f.id == fs.filmId}" th:text="${f.name}"/>
+                    <th:block th:text="' | '"/>
+                    <th:block th:each="h : ${hall}" th:if="${h.id == fs.hallId}" th:text="${h.name}"/>
+                    <th:block th:text="' | '"/>
+                    <th:block th:text="${#temporals.format(fs.startTime, 'dd.MM.yyyy HH:mm')}"/>
+                    <th:block th:text="' | '"/>
+                    <th:block th:text="${fs.price}"/>
+                    <th:block th:text="' ₽'"/>
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3" id="hallInfo" style="display: none;">
+            <p class="text-muted mb-2">
+                <span id="hallName"></span> —
+                <span id="sessionPrice"></span> ₽
+            </p>
+            <p class="small text-muted mb-2">Экран</p>
+            <div class="screen-bar mb-3"></div>
+            <div id="seatMap" class="seat-map mb-3"></div>
+            <div class="d-flex gap-3 small text-muted mb-3">
+                <span><span class="seat-legend seat-free"></span> свободно</span>
+                <span><span class="seat-legend seat-taken"></span> занято</span>
+                <span><span class="seat-legend seat-selected"></span> выбрано</span>
+            </div>
+        </div>
+
+        <input type="hidden" id="rowNumber" name="rowNumber" th:value="${selectedRow}">
+        <input type="hidden" id="placeNumber" name="placeNumber" th:value="${selectedPlace}">
+
+        <div class="mb-3 row">
+            <div class="col-6">
+                <p id="selectedSeatText" class="text-muted mb-0"></p>
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-6">
+                        <a class="btn btn-danger w-100" th:href="@{/filmSessions}">Отмена</a>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-primary w-100" type="submit" id="submitBtn" disabled>
+                            Забронировать
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .screen-bar {
+        height: 6px;
+        background: linear-gradient(to bottom, #adb5bd, #dee2e6);
+        border-radius: 3px;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+    .seat-map {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        overflow-x: auto;
+    }
+    .seat-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .row-label {
+        width: 2rem;
+        text-align: right;
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+    .seat {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        padding: 0;
+        cursor: pointer;
+        background-color: #d4edda;
+    }
+    .seat-taken {
+        background-color: #e9ecef;
+        color: #adb5bd;
+        cursor: not-allowed;
+    }
+    .seat-selected {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+    .seat-legend {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 4px;
+        border: 1px solid #ced4da;
+    }
+    .seat-legend.seat-free { background-color: #d4edda; }
+    .seat-legend.seat-taken { background-color: #e9ecef; }
+    .seat-legend.seat-selected { background-color: #0d6efd; border-color: #0d6efd; }
+</style>
+
+<script th:inline="javascript">
+    const halls = /*[[${hall}]]*/ [];
+    const filmSessions = /*[[${filmSessions}]]*/ [];
+    const tickets = /*[[${tickets}]]*/ [];
+    const selectedSessionId = /*[[${selectedSessionId}]]*/ null;
+    const selectedRow = /*[[${selectedRow}]]*/ null;
+    const selectedPlace = /*[[${selectedPlace}]]*/ null;
+
+    const sessionSelect = document.getElementById('sessionId');
+    const hallInfo = document.getElementById('hallInfo');
+    const seatMap = document.getElementById('seatMap');
+    const rowInput = document.getElementById('rowNumber');
+    const placeInput = document.getElementById('placeNumber');
+    const submitBtn = document.getElementById('submitBtn');
+    const selectedSeatText = document.getElementById('selectedSeatText');
+
+    let currentRow = selectedRow ? parseInt(selectedRow, 10) : 0;
+    let currentPlace = selectedPlace ? parseInt(selectedPlace, 10) : 0;
+
+    function hallById(id) {
+        return halls.find(h => h.id === id);
+    }
+
+    function sessionById(id) {
+        return filmSessions.find(s => s.id === parseInt(id, 10));
+    }
+
+    function takenSeats(sessionId) {
+        return tickets
+            .filter(t => t.sessionId === parseInt(sessionId, 10))
+            .map(t => t.rowNumber + ':' + t.placeNumber);
+    }
+
+    function isTaken(sessionId, row, place) {
+        return takenSeats(sessionId).includes(row + ':' + place);
+    }
+
+    function updateSubmitState() {
+        const hasSeat = currentRow > 0 && currentPlace > 0;
+        submitBtn.disabled = !hasSeat;
+        if (selectedSeatText) {
+            selectedSeatText.textContent = hasSeat
+                ? 'Выбрано: ряд ' + currentRow + ', место ' + currentPlace
+                : '';
+        }
+    }
+
+    function selectSeat(row, place) {
+        currentRow = row;
+        currentPlace = place;
+        rowInput.value = row;
+        placeInput.value = place;
+        renderSeatMap(sessionSelect.value);
+        updateSubmitState();
+    }
+
+    function renderSeatMap(sessionId) {
+        seatMap.innerHTML = '';
+        if (!sessionId) {
+            hallInfo.style.display = 'none';
+            currentRow = 0;
+            currentPlace = 0;
+            rowInput.value = '';
+            placeInput.value = '';
+            updateSubmitState();
+            return;
+        }
+
+        const session = sessionById(sessionId);
+        const hall = hallById(session.hallId);
+        if (!hall) {
+            return;
+        }
+
+        document.getElementById('hallName').textContent = hall.name;
+        document.getElementById('sessionPrice').textContent = session.price;
+        hallInfo.style.display = 'block';
+
+        for (let row = 1; row <= hall.rowCount; row++) {
+            const rowEl = document.createElement('div');
+            rowEl.className = 'seat-row';
+
+            const label = document.createElement('span');
+            label.className = 'row-label';
+            label.textContent = row;
+            rowEl.appendChild(label);
+
+            for (let place = 1; place <= hall.placeCount; place++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'seat';
+                btn.textContent = place;
+                btn.dataset.row = row;
+                btn.dataset.place = place;
+
+                const taken = isTaken(sessionId, row, place);
+                if (taken) {
+                    btn.classList.add('seat-taken');
+                    btn.disabled = true;
+                } else if (currentRow === row && currentPlace === place) {
+                    btn.classList.add('seat-selected');
+                }
+
+                if (!taken) {
+                    btn.addEventListener('click', () => selectSeat(row, place));
+                }
+                rowEl.appendChild(btn);
+            }
+            seatMap.appendChild(rowEl);
+        }
+        updateSubmitState();
+    }
+
+    sessionSelect.addEventListener('change', () => {
+        currentRow = 0;
+        currentPlace = 0;
+        rowInput.value = '';
+        placeInput.value = '';
+        renderSeatMap(sessionSelect.value);
+    });
+
+    if (selectedSessionId) {
+        sessionSelect.value = selectedSessionId;
+    }
+    renderSeatMap(sessionSelect.value);
+</script>
+
+<footer th:include="fragments/blocks/footer :: footer"></footer>
+</body>
+</html>

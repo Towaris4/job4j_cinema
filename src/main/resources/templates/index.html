@@ -6,14 +6,21 @@
 <head th:include="fragments/header :: header"></head>
 <body>
 <div th:replace="fragments/navigation :: navigation"></div>
+<main class="container mt-4">
 <div class="container">
     <body>
     <div class="main-content">
         <div class="container">
             <h3 class="project-title">Проект job4j_cinema, выполняемый в рамках курса Job4j</h3>
+            <div class="text-center">
+                <img th:src="@{/files/4}"
+                     style="width: 50%; height: auto; object-fit: contain;"
+                     alt="No image">
+            </div>
             <p>Смотрите фильмы в 8D и с попкорном!</p>
         </div>
     </div>
+</main>
     <footer th:include="fragments/blocks/footer :: footer"></footer>
     </body>
 </html>

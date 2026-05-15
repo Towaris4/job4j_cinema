@@ -27,13 +27,13 @@ public class UserController {
     }
 
     @PostMapping("/users/register")
-    public String register(Model model, @ModelAttribute ru.job4j.cinema.model.User user) {
+    public String register(Model model, @ModelAttribute User user) {
         var savedUser = userService.save(user);
         if (savedUser.isEmpty()) {
             model.addAttribute("message", "Пользователь с такой почтой уже существует");
             return "errors/404";
         }
-        return "redirect:/vacancies";
+        return "redirect:/index";
     }
 
     @GetMapping("/users/login")
@@ -50,7 +50,12 @@ public class UserController {
         }
         var session = request.getSession();
         session.setAttribute("user", userOptional.get());
-        return "redirect:/vacancies";
+        var redirect = (String) session.getAttribute("redirectAfterLogin");
+        if (redirect != null) {
+            session.removeAttribute("redirectAfterLogin");
+            return "redirect:" + redirect;
+        }
+        return "redirect:/index";
     }
 
     @GetMapping("/users/logout")

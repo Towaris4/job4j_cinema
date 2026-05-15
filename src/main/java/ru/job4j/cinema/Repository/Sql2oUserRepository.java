@@ -24,13 +24,13 @@ public class Sql2oUserRepository implements UserRepository {
     public Optional<User> save(User user) {
         try (var connection = sql2o.open()) {
             var sql = """
-                    INSERT INTO users (email, password, name)
-                    VALUES (:email, :password, :name)
+                    INSERT INTO users (email, password, full_name)
+                    VALUES (:email, :password, :fullName)
                     """;
             var query = connection.createQuery(sql, true)
                     .addParameter("email", user.getEmail())
                     .addParameter("password", user.getPassword())
-                    .addParameter("name", user.getFullName());
+                    .addParameter("fullName", user.getFullName());
             int generatedId = query.executeUpdate().getKey(Integer.class);
             user.setId(generatedId);
             return Optional.of(user);
@@ -49,7 +49,7 @@ public class Sql2oUserRepository implements UserRepository {
     public Optional<User> findByEmailAndPassword(String email, String password) {
         try (var connection = sql2o.open()) {
             var sql = """
-                    SELECT id, email, password, name
+                    SELECT id, email, password, full_name as fullName
                     FROM users
                     WHERE email = :email AND password = :password
                     """;

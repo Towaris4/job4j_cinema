@@ -10,29 +10,35 @@
         <thead class="table-dark">
         <tr>
             <th scope="col">#</th>
+            <th scope="col">Постер</th>
             <th scope="col">Название</th>
             <th scope="col">Описание</th>
             <th scope="col">Год</th>
-            <th scope="col">Жанр (ID)</th>
+            <th scope="col">Жанр</th>
             <th scope="col">Возраст</th>
             <th scope="col">Длительность (мин)</th>
-            <th scope="col">Файл (ID)</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="film : ${films}">
             <td th:text="${film.id}" />
             <td>
-                <a th:text="${film.name}"
-                   th:href="@{/films/{filmId}(filmId=${film.id})}">
-                </a>
+                <div class="mb-3">
+                    <img th:src="@{/files/{film.fileId}(film.fileId=${film.fileId})}"
+                         class="w-100" alt="No image">
+                </div>
             </td>
+            <td th:text="${film.name}"/>
             <td th:text="${film.description}" />
             <td th:text="${film.year}" />
-            <td th:text="${film.genreId}" />
+            <td>
+                <span th:each="g : ${genres}"
+                      th:if="${g.id == film.genreId}"
+                      th:text="${g.name}">
+                </span>
+            </td>
             <td th:text="${film.minimalAge}" />
             <td th:text="${film.durationInMinutes}" />
-            <td th:text="${film.fileId}" />
         </tr>
         </tbody>
     </table>

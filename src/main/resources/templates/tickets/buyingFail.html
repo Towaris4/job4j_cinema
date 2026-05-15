@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container mt-4">
+    <h2>Не удалось купить билет</h2>
+    <div class="alert alert-danger">
+        <p class="mb-0" th:text="${message != null ? message : 'Не удалось приобрести билет. Попробуйте выбрать другое место.'}"></p>
+        <p class="mb-0 mt-2" th:if="${ticket != null and ticket.sessionId > 0}">
+            Сеанс №<span th:text="${ticket.sessionId}"></span>,
+            ряд <span th:text="${ticket.rowNumber}"></span>,
+            место <span th:text="${ticket.placeNumber}"></span>.
+        </p>
+    </div>
+    <a class="btn btn-primary"
+       th:href="@{/tickets/buying(sessionId=${ticket.sessionId})}"
+       th:if="${ticket != null and ticket.sessionId > 0}">Выбрать другое место</a>
+    <a class="btn btn-primary" th:href="@{/tickets/buying}" th:if="${ticket == null or ticket.sessionId == 0}">
+        Попробовать снова
+    </a>
+    <a class="btn btn-outline-secondary ms-2" th:href="@{/filmSessions}">К сеансам</a>
+</div>
+<footer th:include="fragments/blocks/footer :: footer"></footer>
+</body>
+</html>

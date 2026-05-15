@@ -28,8 +28,18 @@ public class SimpleTicketService implements TicketService {
     }
 
     @Override
+    public boolean update(Ticket ticket) {
+        return false;
+    }
+
+    @Override
     public Optional<Ticket> findById(int id) {
         return ticketRepository.findById(id);
+    }
+
+    @Override
+    public Collection<Ticket> findAll() {
+        return ticketRepository.findAll();
     }
 
     @Override
@@ -45,5 +55,15 @@ public class SimpleTicketService implements TicketService {
     @Override
     public boolean deleteById(int id) {
         return ticketRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean deleteBySessionId(int sessionId) {
+        return ticketRepository.deleteById(sessionId);
+    }
+
+    @Override
+    public boolean isSeatTaken(int sessionId, int rowNumber, int placeNumber) {
+        return ticketRepository.isSeatTaken(sessionId, rowNumber, placeNumber);
     }
 }

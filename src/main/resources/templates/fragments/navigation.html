@@ -11,19 +11,19 @@
                 <li class="nav-item"><a class="nav-link active" th:href="@{/index}">Главная</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/filmSessions}">Киносеансы</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/films}">Кинотека</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/ticket/buying}">Бронирование</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/tickets/buying}">Билеты</a></li>
 
             </ul>
 
 
         </div>
-        <div class="d-flex ms-auto me-0" th:if="${user == null or user.name == 'Гость'}">
+        <div class="d-flex ms-auto me-0" th:if="${user == null or user.fullName == 'Гость'}">
             <a class="nav-link text-white" th:href="@{/users/register}">Регистрация</a>
             <a class="nav-link text-white " th:href="@{/users/login}">Войти</a>
         </div>
 
-        <div class="d-flex ms-auto me-0" th:if="${user != null and user.name != 'Гость'}">
-            <a class="nav-link text-white" th:text="${user.name}"></a>
+        <div class="d-flex ms-auto me-0" th:if="${user != null and user.fullName != 'Гость'}">
+            <a class="nav-link text-white" th:text="${user.fullName}"></a>
             <a class="nav-link text-white pe-0" th:href="@{/users/logout}">Выйти</a>
         </div>
     </div>

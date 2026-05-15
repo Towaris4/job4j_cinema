@@ -14,9 +14,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="name" class="form-label"><b>Имя</b></label>
-                    <input type="text" class="form-control" id="name"
-                           name="name" placeholder="Иван" required>
+                    <label for="fullName" class="form-label"><b>Имя</b></label>
+                    <input type="text" class="form-control" id="fullName"
+                           name="fullName" placeholder="Иван" required>
                 </div>
 
                 <div class="mb-3">
@@ -31,15 +31,15 @@
                            id="password" name="password" required>
                 </div>
 
-                <div class="mb-3 row align-items-center">
+                <div class="mb-3 row justify-content-between align-items-center">
                     <div class="col-md-6">
                         <p class="mb-0">Уже зарегистрированы?
                             <a th:href="@{/users/login}">Войти</a>
                         </p>
                     </div>
-                    <div class="col-md-6 d-flex justify-content-between">
-                        <a class="btn btn-danger" th:href="@{/}">Отмена</a>
-                        <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <a th:href="@{/}" class="btn btn-danger mr-2">Отмена</a>
+                        <button class="btn btn-primary " type="submit">Зарегистрироваться</button>
                     </div>
                 </div>
 
