@@ -24,7 +24,9 @@ public class Film {
     private int durationInMinutes;
     private int fileId;
 
-    public Film() {}
+    public Film() {
+
+    }
 
     public Film(int id, String name, String description, int year, int genreId, int minimalAge, int durationInMinutes, int fileId) {
         this.id = id;
