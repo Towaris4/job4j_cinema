@@ -4,7 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cinema.DbTestHelper;
-import ru.job4j.cinema.Repository.Sql2oFilmSessionRepository;
+import ru.job4j.cinema.repository.filmsession.Sql2oFilmSessionRepository;
+import ru.job4j.cinema.service.filmsession.SimpleFilmSessionService;
 
 import java.time.LocalDateTime;
 

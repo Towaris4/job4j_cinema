@@ -4,13 +4,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cinema.DbTestHelper;
-import ru.job4j.cinema.Repository.Sql2oTicketRepository;
-import ru.job4j.cinema.Repository.Sql2oUserRepository;
 import ru.job4j.cinema.model.Ticket;
 import ru.job4j.cinema.model.User;
+import ru.job4j.cinema.repository.ticket.Sql2oTicketRepository;
+import ru.job4j.cinema.repository.user.Sql2oUserRepository;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Sql2oTicketRepositoryTest {
 
@@ -35,8 +38,8 @@ class Sql2oTicketRepositoryTest {
         var userId = saveUser();
         var ticket = new Ticket(0, sessionId, 3, 5, userId);
         var saved = repository.save(ticket);
-        assertThat(saved.getId()).isGreaterThan(0);
-        var found = repository.findById(saved.getId());
+        assertThat(saved.get().getId()).isGreaterThan(0);
+        var found = repository.findById(saved.get().getId());
         assertThat(found).isPresent();
         assertThat(found.get().getRowNumber()).isEqualTo(3);
         assertThat(found.get().getPlaceNumber()).isEqualTo(5);
@@ -52,12 +55,14 @@ class Sql2oTicketRepositoryTest {
     }
 
     @Test
-    public void whenSaveSameSeatThenThrow() {
+    public void whenSaveSameSeatThenReturnEmpty() {
         var sessionId = createSession();
         var userId = saveUser();
-        repository.save(new Ticket(0, sessionId, 2, 2, userId));
-        assertThrows(RuntimeException.class, () ->
-                repository.save(new Ticket(0, sessionId, 2, 2, userId)));
+        Ticket ticket = new Ticket(0, sessionId, 2, 2, userId);
+        Optional<Ticket> firstSave = repository.save(ticket);
+        assertTrue(firstSave.isPresent());
+        Optional<Ticket> secondSave = repository.save(ticket);
+        assertTrue(secondSave.isEmpty());
     }
 
     @Test

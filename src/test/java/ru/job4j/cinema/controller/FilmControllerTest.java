@@ -7,8 +7,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.cinema.model.Film;
 import ru.job4j.cinema.model.Genre;
-import ru.job4j.cinema.service.FilmService;
-import ru.job4j.cinema.service.GenreService;
+import ru.job4j.cinema.service.film.FilmService;
+import ru.job4j.cinema.service.genre.GenreService;
 
 import java.util.List;
 
@@ -31,11 +31,22 @@ class FilmControllerTest {
     private GenreService genreService;
 
     @Test
-    public void whenGetAllThenReturnFilmsList() throws Exception {
-        var film = new Film(1, "Начало", "Описание", 2010, 1, 12, 148, 1);
+    void whenGetAllThenReturnFilmsList() throws Exception {
+        var film = new Film.Builder()
+                .id(1)
+                .name("Начало")
+                .description("Описание")
+                .year(2010)
+                .genreId(1)
+                .minimalAge(12)
+                .durationInMinutes(148)
+                .fileId(1)
+                .build();
         var genre = new Genre(1, "Фантастика");
+
         when(filmService.findAll()).thenReturn(List.of(film));
         when(genreService.findAll()).thenReturn(List.of(genre));
+
         mockMvc.perform(get("/films"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("films/list"))

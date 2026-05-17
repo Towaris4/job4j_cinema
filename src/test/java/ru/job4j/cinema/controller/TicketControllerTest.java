@@ -9,10 +9,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.cinema.model.FilmSession;
 import ru.job4j.cinema.model.Ticket;
 import ru.job4j.cinema.model.User;
-import ru.job4j.cinema.service.FilmService;
-import ru.job4j.cinema.service.FilmSessionService;
-import ru.job4j.cinema.service.HallService;
-import ru.job4j.cinema.service.TicketService;
+import ru.job4j.cinema.service.film.FilmService;
+import ru.job4j.cinema.service.filmsession.FilmSessionService;
+import ru.job4j.cinema.service.hall.HallService;
+import ru.job4j.cinema.service.ticket.TicketService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -46,11 +46,15 @@ class TicketControllerTest {
 
     @Test
     public void whenGetBuyingThenReturnBuyingPage() throws Exception {
+        User user = new User();
+        user.setId(1);
+        user.setEmail("test@test.com");
         when(filmSessionService.findAll()).thenReturn(Collections.emptyList());
         when(filmService.findAll()).thenReturn(Collections.emptyList());
         when(hallService.findAll()).thenReturn(Collections.emptyList());
         when(ticketService.findAll()).thenReturn(Collections.emptyList());
-        mockMvc.perform(get("/tickets/buying"))
+        mockMvc.perform(get("/tickets/buying")
+                        .sessionAttr("user", user))
                 .andExpect(status().isOk())
                 .andExpect(view().name("tickets/buying"));
     }
@@ -68,7 +72,7 @@ class TicketControllerTest {
                         .param("rowNumber", "2")
                         .param("placeNumber", "3"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("tickets/buyingSuccesful"))
+                .andExpect(view().name("tickets/success"))
                 .andExpect(model().attributeExists("ticket"));
     }
 
@@ -84,19 +88,27 @@ class TicketControllerTest {
                         .param("rowNumber", "2")
                         .param("placeNumber", "3"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("tickets/buyingFail"))
+                .andExpect(view().name("tickets/fail"))
                 .andExpect(model().attributeExists("message", "ticket"));
     }
 
     @Test
     public void whenGetBuyingWithSessionIdThenSelectSession() throws Exception {
+        User user = new User();
+        user.setId(1);
+        user.setEmail("test@test.com");
+
         var start = LocalDateTime.of(2026, 5, 15, 18, 0);
         var filmSession = new FilmSession(5, 1, 1, start, start.plusHours(2), 300);
+
         when(filmSessionService.findAll()).thenReturn(Collections.singletonList(filmSession));
         when(filmService.findAll()).thenReturn(Collections.emptyList());
         when(hallService.findAll()).thenReturn(Collections.emptyList());
         when(ticketService.findAll()).thenReturn(Collections.emptyList());
-        mockMvc.perform(get("/tickets/buying").param("sessionId", "5"))
+
+        mockMvc.perform(get("/tickets/buying")
+                        .param("sessionId", "5")
+                        .sessionAttr("user", user))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("selectedSessionId", 5));
     }

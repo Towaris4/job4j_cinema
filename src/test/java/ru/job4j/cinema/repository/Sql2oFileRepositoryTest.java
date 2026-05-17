@@ -4,7 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cinema.DbTestHelper;
-import ru.job4j.cinema.Repository.Sql2oFileRepository;
+import ru.job4j.cinema.repository.file.Sql2oFileRepository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 

@@ -8,9 +8,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.cinema.model.Film;
 import ru.job4j.cinema.model.FilmSession;
 import ru.job4j.cinema.model.Hall;
-import ru.job4j.cinema.service.FilmService;
-import ru.job4j.cinema.service.FilmSessionService;
-import ru.job4j.cinema.service.HallService;
+import ru.job4j.cinema.service.film.FilmService;
+import ru.job4j.cinema.service.filmsession.FilmSessionService;
+import ru.job4j.cinema.service.hall.HallService;
 
 import java.time.LocalDateTime;
 import java.util.List;

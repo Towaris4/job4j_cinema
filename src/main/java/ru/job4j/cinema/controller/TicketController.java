@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.job4j.cinema.model.Ticket;
 import ru.job4j.cinema.model.User;
-import ru.job4j.cinema.service.FilmService;
-import ru.job4j.cinema.service.FilmSessionService;
-import ru.job4j.cinema.service.HallService;
-import ru.job4j.cinema.service.TicketService;
+import ru.job4j.cinema.service.film.FilmService;
+import ru.job4j.cinema.service.filmsession.FilmSessionService;
+import ru.job4j.cinema.service.hall.HallService;
+import ru.job4j.cinema.service.ticket.TicketService;
 
 @ThreadSafe
 @Controller
@@ -49,10 +49,10 @@ public class TicketController {
         if (savedTicket.isEmpty()) {
             model.addAttribute("message", "Не удалось приобрести билет. Это место уже занято.");
             model.addAttribute("ticket", ticket);
-            return "tickets/buyingFail";
+            return "tickets/fail";
         }
         model.addAttribute("ticket", savedTicket.get());
-        return "tickets/buyingSuccesful";
+        return "tickets/success";
     }
 
     private void fillBuyingModel(Model model) {

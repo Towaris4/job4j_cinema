@@ -4,10 +4,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cinema.DbTestHelper;
-import ru.job4j.cinema.Repository.Sql2oTicketRepository;
-import ru.job4j.cinema.Repository.Sql2oUserRepository;
 import ru.job4j.cinema.model.Ticket;
 import ru.job4j.cinema.model.User;
+import ru.job4j.cinema.repository.ticket.Sql2oTicketRepository;
+import ru.job4j.cinema.repository.user.Sql2oUserRepository;
+import ru.job4j.cinema.service.ticket.SimpleTicketService;
 
 import java.time.LocalDateTime;
 

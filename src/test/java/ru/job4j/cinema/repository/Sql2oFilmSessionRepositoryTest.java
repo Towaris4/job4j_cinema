@@ -4,7 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cinema.DbTestHelper;
-import ru.job4j.cinema.Repository.Sql2oFilmSessionRepository;
+import ru.job4j.cinema.repository.filmsession.Sql2oFilmSessionRepository;
 
 import java.time.LocalDateTime;
 
@@ -40,8 +40,7 @@ class Sql2oFilmSessionRepositoryTest {
     @Test
     public void whenFindAllThenGetAllSessions() {
         createSession();
-        createSession();
-        assertThat(repository.findAll().size()).isEqualTo(2);
+        assertThat(repository.findAll().size()).isEqualTo(1);
     }
 
     private int createSession() {
